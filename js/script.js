@@ -15,6 +15,18 @@ function setQueryValue(qval) {
   history.pushState(null, '', url);
 }
 
+function getPageValue() {
+  const url = new URL(window.location);
+  let np = url.searchParams.get("p");
+  return np;
+}
+
+function setPageValue(qval) {
+  const url = new URL(window.location);
+  url.searchParams.set("p", qval);
+  history.pushState(null, '', url);
+}
+
 async function getData(path) {
   try {
     const response = await fetch(path);
@@ -38,6 +50,7 @@ for (let i = 0; i < 16; i++) {
   ithm.alt = "nav";
   ithm.id = "thm" + i;
   ithm.addEventListener('click', function() {
+    setPageValue("photo");
     setQueryValue(this.key);
     dt.then(updateData);
   });
@@ -50,6 +63,7 @@ rbutton.addEventListener('click', (res) => {
   dt.then((res) => {
     return(get_random(Object.keys(res)));
   }).then((res) => {
+    setPageValue("photo");
     setQueryValue(res);
     dt.then(updateData);
   });
@@ -57,27 +71,65 @@ rbutton.addEventListener('click', (res) => {
 
 let cbutton = document.getElementById("clusterBtn");
 cbutton.addEventListener('click', (res) => {
+  setPageValue("cluster");
   setQueryValue("");
   dt.then(updateData);
 });
 
+let mbutton = document.getElementById("mediaBtn");
+mbutton.addEventListener('click', (res) => {
+  setPageValue("media");
+  setQueryValue("");
+  dt.then(updateData);
+});
+
+let abutton = document.getElementById("aboutBtn");
+abutton.addEventListener('click', (res) => {
+  setPageValue("main");
+  setQueryValue("");
+  dt.then(updateData);
+});
 
 function updateData(result) {
-  let qval = getQueryValue();
+  let qval = getQueryValue() || "";
+  let pval = getPageValue() || "main";
 
-  if (!(qval in result))
+  let wbox = document.getElementById("welcome-box");
+  let mbox = document.getElementById("media-box");
+  let ibi = document.getElementById("image-box-img");
+
+  if (!(["cluster", "photo", "media"].includes(pval)) ||
+      ((pval === "photo") && !(qval in result)))
   {
-    let ibi = document.getElementById("image-box-img");
-    ibi.src = "docu_logo.png";
+    ibi.src = "icon/docu_logo.png";
+    wbox.style.display = "inline-block";
+    setPageValue("main");
+    return null;
+  }
+
+  if (pval === "media")
+  {
+    ibi.src = "icon/docu_logo.png";
+    wbox.style.display = "none";
+    mbox.style.display = "inline-block";
+    return null;
+  }
+
+  if (pval === "cluster")
+  {    
+    ibi.src = "icon/docu_logo.png";
+    mbox.style.display = "none";
+    wbox.style.display = "none";
     clustPanel.style.display = "inline-block";
     setQueryValue("");
     return null;
   }
 
+  mbox.style.display = "none";
+  wbox.style.display = "none";
   clustPanel.style.display = "none";
-  let dt = result[qval];
+  let tres = result[qval];
 
-  let ibi = document.getElementById("image-box-img");
   let naid = document.getElementById("meta:naid");
   let linkstr = document.getElementById("meta:link");
   let titlestr = document.getElementById("meta:title");
@@ -86,21 +138,21 @@ function updateData(result) {
   let photographer = document.getElementById("meta:photographer");
   let datespan = document.getElementById("meta:date");
 
-  ibi.src = "img/med/" + dt.path;
+  ibi.src = "img/med/" + tres.path;
   naid.innerHTML = 'Nara NAID ' + qval;
   linkstr.href = "https://catalog.archives.gov/id/" + qval;
-  titlestr.innerHTML = dt.title;
-  caption.innerHTML = dt.caption;
-  location.innerHTML = dt.placename;
-  photographer.innerHTML = dt.photographer;
-  datespan.innerHTML = dt.date;
+  titlestr.innerHTML = tres.title;
+  caption.innerHTML = tres.caption;
+  location.innerHTML = tres.placename;
+  photographer.innerHTML = tres.photographer;
+  datespan.innerHTML = tres.date;
 
   for (let i = 0; i < 16; i++) {
     let thm = document.getElementById("thm" + i);
 
-    thm['key'] = dt.nn1[i];
+    thm['key'] = tres.nn1[i];
 
-    thm.src = "img/thm/" + result[dt.nn1[i]].path;
+    thm.src = "img/thm/" + result[tres.nn1[i]].path;
   }
 };
 
@@ -117,6 +169,7 @@ function makeClusters(result) {
     ithm.alt = "nav";
     ithm.key = result[i].thm;
     ithm.addEventListener('click', function() {
+      setPageValue("photo");
       setQueryValue(this.key);
       dt.then(updateData);
     });
@@ -133,6 +186,3 @@ dt.then(updateData);
 
 let cl = getData("data/clusters.json");
 cl.then(makeClusters);
-
-
-
