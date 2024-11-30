@@ -1,0 +1,72 @@
+:root {
+  --bulma-primary-h: 89deg;
+  --bulma-primary-s: 28.32%;
+  --bulma-primary-l: 90%;
+  --bulma-scheme-h: 89deg;
+  --bulma-scheme-s: 28.32%;
+  --bulma-link-h: 228.21deg;
+  --bulma-link-s: 72.67%;
+  --bulma-link-l: 31.57%;
+  --bulma-warning-h: 89.39deg;
+  --bulma-warning-s: 28.32%;
+  --bulma-warning-l: 33.92%;
+  --bulma-family-primary: "Fira Sans";
+}
+
+.modal {
+/*  --bulma-modal-content-width: 60rem;*/
+}
+
+.grid {
+/*  --bulma-grid-gap: 2rem;*/
+}
+
+/*#btnEnterSiteModalWelcome {
+  margin: 0 auto;
+  display: block;
+}
+
+#backgroundModalWelcome {
+  background-image: url("../icon/bg.jpg") !important;
+}
+*/
+#btnPaginateNext[disabled], #btnPaginatePrevious[disabled] {
+  pointer-events: none !important;
+}
+
+figure {
+  text-align: center;  
+  margin: auto;
+}
+
+#innerContainerSearch img:hover,
+#innerContainerImage img:hover {
+  transition-duration: 250ms;
+  opacity: 70%;
+}
+
+#innerContainerCluster figure:hover,
+#innerContainerPhotographer figure:hover {
+  transition-duration: 250ms;
+  opacity: 70%;
+}
+
+.image-text-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.image-text-center strong {
+  color: black !important;
+}
+
+.is-opacity-40 {
+  background-clip: padding-box;
+  opacity: 0.4;
+}
+
+.has-border {
+  border: 3px solid black;
+}
