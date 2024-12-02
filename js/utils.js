@@ -46,5 +46,12 @@ const setSearchParam = function(nvpair) {
   history.pushState(null, '', url);
 };
 
+const addStringIfNot = function(strVal, toAdd) {
+  const re = new RegExp(toAdd);
+  if (!re.test(strVal)) { strVal += " " + toAdd; } ;  
+  return strVal;
+};
 
-export { setClass, getData, gId, getSearchParam, setSearchParam }; 
+export {
+  addStringIfNot, setClass, getData, gId, getSearchParam, setSearchParam
+}; 

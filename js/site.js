@@ -1,15 +1,17 @@
 "use strict";
 
 import {
-  setClass, getData, gId, getSearchParam, setSearchParam
+  addStringIfNot, setClass, getData, gId, getSearchParam, setSearchParam
 } from "./utils.js";
 
 // maximum number of images to display on a search result page
 const PAGE_SIZE = 24;
 const MODE_APPS = ["welcome", "grid", "cluster", "image",
-                   "modal", "photographer"];
+                   "modal", "photographer", "about"];
 
 // store constant DOM elements by ID and store global here
+const btnImageNext = gId("btnImageNext");
+const btImagePrevious = gId("btnImagePrevious");
 const btnPaginateNext = gId("btnPaginateNext");
 const btnPaginatePrevious = gId("btnPaginatePrevious");
 const imgContainerImage = gId("imgContainerImage");
@@ -35,6 +37,7 @@ let curQuery = "";
 let curPage = 1;
 let curPageMax = 1;
 let curPid = "542495";
+let curId = 0;
 let curIds = [];
 let curCountClust = {};
 let curCountPhotographer = {};
@@ -63,8 +66,10 @@ const updateStateAll = function()
     setClass("liTabsCluster", "is-active", elem === "cluster");    
     setClass("liTabsPhotographer", "is-active", elem === "photographer");
   }
+  setClass("elemSectionAbout", "is-hidden", elem !== "about");
   setClass("elemModalImage", "is-active", elem === "modal");
-  setClass("elemModalWelcome", "is-active", elem === "welcome");
+  setClass("elemSectionMain", "is-hidden", ['welcome', 'about'].includes(elem));
+  setClass("elemSectionWelcome", "is-hidden", elem !== "welcome");
 
   // update search results if needed
   if ((curQuery !== query) | (curIds.length === 0))
@@ -88,6 +93,7 @@ const updateStateAll = function()
   if (curPid !== pid)
   {
     curPid = pid;
+    curId = curIds.indexOf(pid);
     updateStateImage(curPid);  
   }
 
@@ -108,7 +114,7 @@ const doSearch = function (iSet, qval)
 const splitStringQuotes = function(iString)
 {
   const myRegexp = /[^\s"]+|"([^"]*)"/gi;
-  let oArray = [];
+  const oArray = [];
 
   do {
       var match = myRegexp.exec(iString);
@@ -118,7 +124,7 @@ const splitStringQuotes = function(iString)
       }
   } while (match != null);
   return(oArray);
-}
+};
 
 const countClusters = function(searchSet, dRes)
 {
@@ -127,7 +133,7 @@ const countClusters = function(searchSet, dRes)
     curCountClust[key] = 0;
   };
 
-  for (let [key, value] of Object.entries(searchSet)) {
+  for (const [key, value] of Object.entries(searchSet)) {
     curCountClust[value.cluster] += 1;
   }
 };
@@ -139,7 +145,7 @@ const countPhotographers = function(searchSet, dRes)
     curCountPhotographer[key] = 0;
   };
 
-  for (let [key, value] of Object.entries(searchSet)) {
+  for (const [key, value] of Object.entries(searchSet)) {
     curCountPhotographer[value.photographer] += 1;
   }
 };
@@ -286,6 +292,26 @@ const updateStateImage = function(pid)
   imgContainerImage.src = "img/med/" + pid + ".jpg";
   imgModalImage.src = "img/med/" + pid + ".jpg";
 
+  console.log(curId);
+  if (curId >= 0)
+  {
+    if (curId !== 0)
+    {
+      btnImagePrevious.removeAttribute("disabled");
+    } else {
+      btnImagePrevious.toggleAttribute("disabled", "disabled");
+    }
+    if (curId !== curIds.length - 1 )
+    {
+      btnImageNext.removeAttribute("disabled");
+    } else {
+      btnImageNext.toggleAttribute("disabled", "disabled");
+    }
+  } else {
+    btnImageNext.toggleAttribute("disabled", "disabled");
+    btnImagePrevious.toggleAttribute("disabled", "disabled");
+  }
+
   getData("data/json/" + pid + ".json").then((r) => {
     metaNara.innerHTML = pid;
     metaNara.href = "https://catalog.archives.gov/id/" + pid;
@@ -330,7 +356,7 @@ const updateStateImage = function(pid)
       metaKeywords.appendChild(nLink);
       if(j != 9) {
         const span = document.createElement("span");
-        span.innerHTML = " &ndash; "
+        span.innerHTML = " &ndash; ";
         metaKeywords.appendChild(span);
       };
     }
@@ -368,9 +394,15 @@ const updateStateCluster = function()
 {
   dBase.then((dRes) => {
 
-    let items = Object.keys(curCountClust).map((key) => { return [key, curCountClust[key]] });
-    if (curQuery != "") { items.sort((first, second) => { return second[1] - first[1] }); }
-    const keys = items.map((e) => { return e[0] });
+    const items = Object.keys(
+      curCountClust).map((key) => {
+        return [key, curCountClust[key]];
+      }
+    );
+    if (curQuery != "") {
+      items.sort((first, second) => { return second[1] - first[1]; });
+    }
+    const keys = items.map((e) => { return e[0]; });
 
     innerContainerCluster.replaceChildren();
     for (let j = 0; j < keys.length; j++) {
@@ -387,8 +419,10 @@ const updateStateCluster = function()
 
         div.addEventListener(
           "click", () => {
-            inputControl.value += " cluster:" + 
-              String(key).padStart(2, '0');
+            inputControl.value = addStringIfNot(
+              inputControl.value,
+              "cluster:" + String(key).padStart(2, '0')
+            );
             setSearchParam({"page": 1, "q": inputControl.value, "r": "grid"});
             updateStateAll();
           }
@@ -421,11 +455,11 @@ const updateStatePhotographer = function()
 {
   dBase.then((dRes) => {
 
-    let items = Object.keys(curCountPhotographer).map((key) => {
-      return [key, curCountPhotographer[key]]
+    const items = Object.keys(curCountPhotographer).map((key) => {
+      return [key, curCountPhotographer[key]];
     });
-    items.sort((first, second) => { return second[1] - first[1] });
-    const keys = items.map((e) => { return e[0] });
+    items.sort((first, second) => { return second[1] - first[1]; });
+    const keys = items.map((e) => { return e[0]; });
 
     innerContainerPhotographer.replaceChildren();
     for (let j = 0; j < keys.length; j++) {
@@ -442,7 +476,10 @@ const updateStatePhotographer = function()
 
         div.addEventListener(
           "click", () => {
-            inputControl.value += " \"photographer:" + key + "\"";
+            inputControl.value = addStringIfNot(
+              inputControl.value,
+              "\"photographer:" + key + "\""
+            );
             setSearchParam({"page": 1, "q": inputControl.value, "r": "grid"});
             updateStateAll();
           }
@@ -469,28 +506,25 @@ const updateStatePhotographer = function()
   });
 };
 
+const addSearchOptions = function(dRes) {
+  const datalistObj = gId("datalistObj");
+
+  for (let j = 0; j < dRes.opts.length; j++) { 
+    const option = document.createElement("option");
+    option.value = dRes.opts[j];
+    datalistObj.appendChild(option);
+  }
+};
+
 // download the main dataset
 const dBase = getData("data/data.json");
 
 document.addEventListener('DOMContentLoaded', () => {
 
   dBase.then(updateStateAll);
+  dBase.then(addSearchOptions);
 
-  gId("btnCloseModalWelcome").addEventListener(
-    "click", () => {
-      setSearchParam({"r": "grid"});
-      updateStateAll();
-    }
-  ); 
-
-  gId("btnEnterSiteModalWelcome").addEventListener(
-    "click", () => {
-      setSearchParam({"r": "grid"});
-      updateStateAll();
-    }
-  ); 
-
-  gId("backgroundModalWelcome").addEventListener(
+  gId("btnCloseWelcome").addEventListener(
     "click", () => {
       setSearchParam({"r": "grid"});
       updateStateAll();
@@ -499,14 +533,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   gId("linkNavHome").addEventListener(
     "click", () => {
-      setSearchParam({"r": "grid", "q": ""});
+      setSearchParam({"r": "welcome", "q": ""});
       updateStateAll();
     }
   ); 
 
   gId("linkNavAbout").addEventListener(
     "click", () => {
-      setSearchParam({"r": "welcome"});
+      setSearchParam({"r": "about"});
       updateStateAll();
     }
   ); 
@@ -560,6 +594,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   ); 
 
+  gId("btnAboutWelcome").addEventListener(
+    "click", () => {
+      setSearchParam({"r": "about"});
+      updateStateAll();
+    }
+  ); 
+
   inputControl.addEventListener('keypress', (res) => {
     if (event.key === "Enter") {
       setSearchParam({
@@ -586,6 +627,20 @@ document.addEventListener('DOMContentLoaded', () => {
     setSearchParam({"page": curPage - 1});
     updateStateAll();
   });
+
+  btnImageNext.addEventListener(
+    "click", () => {
+      setSearchParam({"pid": curIds[curId + 1]});
+      updateStateAll();
+    }
+  );
+
+  btnImagePrevious.addEventListener(
+    "click", () => {
+      setSearchParam({"pid": curIds[curId - 1]});
+      updateStateAll();
+    }
+  );
 
   const $navbarBurgers = Array.prototype.slice.call(
     document.querySelectorAll('.navbar-burger'), 0
