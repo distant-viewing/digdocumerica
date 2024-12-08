@@ -78,6 +78,7 @@
 
 .has-background-image {
   background-image: url("../icon/bg.jpg") !important;
+  background-size: cover;
 }
 
 #btnPaginateNext[disabled],
