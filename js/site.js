@@ -7,7 +7,7 @@ import {
 // maximum number of images to display on a search result page
 const PAGE_SIZE = 24;
 const MODE_APPS = ["welcome", "grid", "cluster", "image",
-                   "modal", "photographer", "about"];
+                   "modal", "photographer", "about", "map"];
 
 // store constant DOM elements by ID and store global here
 const btnImageNext = gId("btnImageNext");
@@ -21,6 +21,7 @@ const innerContainerCluster = gId("innerContainerCluster");
 const innerContainerImage = gId("innerContainerImage");
 const innerContainerSearch = gId("innerContainerSearch");
 const innerContainerPhotographer = gId("innerContainerPhotographer");
+const innerContainerMap = gId("innerContainerMap");
 const metaNara = gId("metaNara");
 const metaDate = gId("metaDate");
 const metaPhotographer = gId("metaPhotographer");
@@ -41,6 +42,7 @@ let curId = 0;
 let curIds = [];
 let curCountClust = {};
 let curCountPhotographer = {};
+let curCountLocation = {};
 
 const updateStateAll = function()
 {
@@ -61,15 +63,19 @@ const updateStateAll = function()
     setClass("elemContainerCluster", "is-hidden", elem !== "cluster");
     setClass("elemContainerImage", "is-hidden", elem !== "image");
     setClass("elemContainerPhotographer", "is-hidden", elem !== "photographer");
+    setClass("elemContainerMap", "is-hidden", elem !== "map");
 
     setClass("liTabsGrid", "is-active", elem === "grid");
     setClass("liTabsCluster", "is-active", elem === "cluster");    
     setClass("liTabsPhotographer", "is-active", elem === "photographer");
+    setClass("liTabsMap", "is-active", elem === "map");
   }
   setClass("elemSectionAbout", "is-hidden", elem !== "about");
   setClass("elemModalImage", "is-active", elem === "modal");
   setClass("elemSectionMain", "is-hidden", ['welcome', 'about'].includes(elem));
   setClass("elemSectionWelcome", "is-hidden", elem !== "welcome");
+
+  if (mapObject !== null) { mapObject.invalidateSize(); }
 
   // update search results if needed
   if ((curQuery !== query) | (curIds.length === 0))
@@ -80,6 +86,7 @@ const updateStateAll = function()
     updateStateGridPagination(curPage); 
     updateStateCluster();
     updateStatePhotographer();
+    updateStateMap();
   }
   
   // update page if needed (already done if new search)
@@ -150,6 +157,18 @@ const countPhotographers = function(searchSet, dRes)
   }
 };
 
+const countLocation = function(searchSet, dRes)
+{
+  curCountLocation = {};
+  for (const [key, value] of Object.entries(dRes.location)) {
+    curCountLocation[key] = 0;
+  };
+
+  for (const [key, value] of Object.entries(searchSet)) {
+    curCountLocation[value.location] += 1;
+  }
+};
+
 const updateStateSearch = function(query)
 {
   dBase.then((dRes) => {
@@ -170,6 +189,7 @@ const updateStateSearch = function(query)
     curPageMax = Math.ceil(curIds.length / PAGE_SIZE);
     countClusters(searchSet, dRes);
     countPhotographers(searchSet, dRes);
+    countLocation(searchSet, dRes);
   });
 };
 
@@ -292,7 +312,6 @@ const updateStateImage = function(pid)
   imgContainerImage.src = "img/med/" + pid + ".jpg";
   imgModalImage.src = "img/med/" + pid + ".jpg";
 
-  console.log(curId);
   if (curId >= 0)
   {
     if (curId !== 0)
@@ -506,6 +525,61 @@ const updateStatePhotographer = function()
   });
 };
 
+const updateStateMap = function()
+{
+  dBase.then((dRes) => {
+
+    const items = Object.keys(curCountLocation).map((key) => {
+      return [key, curCountLocation[key]];
+    });
+    items.sort((first, second) => { return second[1] - first[1]; });
+    const keys = items.map((e) => { return e[0]; });
+
+    resetMap();
+    for (let j = 0; j < keys.length; j++) {
+      const value = dRes.location[keys[j]];
+      if (keys[j] !== "OTHER")
+      {
+        const cutCnt = curCountLocation[value['location']];
+        if (cutCnt > 0)
+        {
+          const marker = L.circle(
+            [value['lat'], value['lon']],
+            {
+              color: "#576f3e",
+              weight: 1,
+              fillColor: '#b3c89d',
+              fillOpacity: 0.7,
+              radius: 10000 * Math.sqrt(cutCnt),
+              className: 'leaflet-circle-custom'
+          }
+          ).addTo(mapObject);
+
+          marker.bindTooltip(
+            value['location'] + ": <b>" + cutCnt.toString() + "</b>",
+            {
+              direction: "bottom",
+              sticky: true,
+              opacity: 1,
+              className: 'leaflet-tooltip-custom' 
+            }
+          );
+
+          marker.on("click", function(e) {
+            inputControl.value = addStringIfNot(
+              inputControl.value,
+              "\"location:" + value['location'] + "\""
+            )
+            setSearchParam({"page": 1, "q": inputControl.value, "r": "grid"});
+            updateStateAll();
+          });
+        }
+      }
+    }
+
+  });
+};
+
 const addSearchOptions = function(dRes) {
   const datalistObj = gId("datalistObj");
 
@@ -518,6 +592,7 @@ const addSearchOptions = function(dRes) {
 
 // download the main dataset
 const dBase = getData("data/data.json");
+let mapObject = null;
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -587,6 +662,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   ); 
 
+  gId("liTabsMap").addEventListener(
+    "click", () => {
+      setSearchParam({"r": "map"});
+      updateStateAll();
+    }
+  ); 
+
   gId("linkBackResults").addEventListener(
     "click", () => {
       setSearchParam({"r": "grid"});
@@ -652,7 +734,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const $target = gId(target);
       el.classList.toggle('is-active');
       $target.classList.toggle('is-active');
-
     });
   });
 
@@ -661,3 +742,18 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 });
+
+const resetMap = function() {
+  console.log(mapObject);
+  if (mapObject !== null) { mapObject.remove(); }
+
+  mapObject = L.map('map').setView(
+    [35.5, -95.41508215962735],
+    4
+  );
+
+  L.tileLayer('cache/{z}/{x}/{y}.png', {
+      maxZoom: 7,
+      attribution: ''
+  }).addTo(mapObject);
+};

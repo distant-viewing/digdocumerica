@@ -15,7 +15,7 @@
 }
 
 .navbar {
-  --bulma-navbar-item-hover-background-l-delta: 0% !important;
+  --bulma-navbar-item-hover-background-l-delta: -10% !important;
 }
 
 #elemControl {
@@ -44,6 +44,17 @@
 
 .navbar {
   --bulma-navbar-item-hover-background-l-delta: 0% !important;
+}
+
+a.navbar-item:focus, a.navbar-item:focus-within, a.navbar-item:hover,
+.navbar-link:focus,
+.navbar-link:focus-within,
+.navbar-link:hover {
+  background-color: inherit;
+}
+
+a.navbar-item:hover,.navbar-link:hover {
+  background-color: #ccd3c5;
 }
 
 #elemControl {
@@ -227,40 +238,27 @@ figure {
   border: 2px solid #acc492;
 }
 
-.tooltip {
-  position: relative;
-  cursor: pointer;
+#map
+{
+  width: 960px;
+  height: 600px;
 }
 
-.tooltipInline {
-  display: inline-block;
-  border-bottom: 1px dotted black;
+.leaflet-tooltip-custom
+{
+  font-family: "Fira Sans" !important;
+  font-size: 1.1em;
+  line-height: 1.1em;
+  background: #f8f7fd;
+  color: #444a4d;
+  white-space: nowrap;
 }
 
-.tooltip .tooltiptext {
-  visibility: hidden;
-  width: 520px;
-  background-color: black;
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 5px 0;
-  position: absolute;
-  z-index: 1;
-  top: -5px;
-  left: 110%;
+.leaflet-tooltip-custom b
+{
+  color: #576f3e;
 }
 
-.tooltip .tooltiptext::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  right: 100%;
-  margin-top: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: transparent black transparent transparent;
-}
-.tooltip:hover .tooltiptext {
-  visibility: visible;
+.leaflet-circle-custom:hover {
+  fill: #576f3e !important;
 }
