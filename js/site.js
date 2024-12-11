@@ -744,7 +744,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 const resetMap = function() {
-  console.log(mapObject);
   if (mapObject !== null) { mapObject.remove(); }
 
   mapObject = L.map('map').setView(
