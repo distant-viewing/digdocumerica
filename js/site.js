@@ -4,6 +4,9 @@ import {
   addStringIfNot, setClass, getData, gId, getSearchParam, setSearchParam
 } from "./utils.js";
 
+import { Tensor, matmul, AutoTokenizer, SiglipTextModel } from './transformers.min.js';
+
+
 // maximum number of images to display on a search result page
 const PAGE_SIZE = 24;
 const MODE_APPS = ["welcome", "grid", "cluster", "image",
@@ -43,6 +46,9 @@ let curIds = [];
 let curCountClust = {};
 let curCountPhotographer = {};
 let curCountLocation = {};
+let queryString = "";
+let noResultsFlag = false;
+let sortOnlyFlag = false;
 
 const updateStateAll = function()
 {
@@ -83,10 +89,6 @@ const updateStateAll = function()
     curQuery = query;
     curPage = 1;
     updateStateSearch(curQuery);
-    updateStateGridPagination(curPage); 
-    updateStateCluster();
-    updateStatePhotographer();
-    updateStateMap();
   }
   
   // update page if needed (already done if new search)
@@ -108,7 +110,7 @@ const updateStateAll = function()
 
 const doSearch = function (iSet, qval)
 {
-  const re = new RegExp("\\b" + qval + "\\b");
+  const re = new RegExp("\\b" + qval);
   const searchSet = {};
 
   for (const [key, value] of Object.entries(iSet)) {
@@ -171,25 +173,52 @@ const countLocation = function(searchSet, dRes)
 
 const updateStateSearch = function(query)
 {
-  dBase.then((dRes) => {
+  dBase.then(async (dRes) => {
     inputControl.value = query;
     const querySet = splitStringQuotes(query);
     let searchSet = dRes.search;
 
+    let queryStringArray = [];
     for (let j = 0; j < querySet.length; j++)
     {
       let qs = querySet[j].toLowerCase();
       qs = qs.replace('"','');
       qs = qs.replace('.','');
+      if (!qs.includes(":")) { queryStringArray.push(qs) };
       searchSet = doSearch(searchSet, qs);
     }
+    queryString = queryStringArray.join(" ");
 
-    if (query === "") { searchSet = dRes.search; }
-    curIds = Object.keys(searchSet);
+    noResultsFlag = false;
+    sortOnlyFlag = false;
+
+    if (query.includes(":sort")) {
+      searchSet = {};
+      sortOnlyFlag = true;
+    }
+
+    if (query === "") { 
+      searchSet = dRes.search;
+      curIds = Object.keys(searchSet);
+    } else if (Object.keys(searchSet).length > 0) {
+      curIds = Object.keys(searchSet);
+      await sortBySearch(queryString);   
+    } else {
+      noResultsFlag = true;
+      searchSet = dRes.search;
+      curIds = Object.keys(searchSet);
+      await sortBySearch(queryString);   
+    }
+
     curPageMax = Math.ceil(curIds.length / PAGE_SIZE);
     countClusters(searchSet, dRes);
     countPhotographers(searchSet, dRes);
     countLocation(searchSet, dRes);
+
+    updateStateGridPagination(curPage); 
+    updateStateCluster();
+    updateStatePhotographer();
+    updateStateMap();
   });
 };
 
@@ -289,20 +318,34 @@ const updateStateGridPagination = function(page)
         ' photographs'; 
     } else if (curIds.length === 0) {
       spanSearchMessage.innerHTML =
-        'No results found for <strong class="has-text-link">"' +
-        curQuery + '"</strong>';      
+        'No results found for \'<strong class="has-text-link">' +
+        curQuery + '</strong>\'';      
+    } else if (sortOnlyFlag) {
+      spanSearchMessage.innerHTML =
+        'Showing ' +
+        '<strong>' + String((page - 1) * PAGE_SIZE + 1) + "-" +
+        String((page) * PAGE_SIZE) + "</strong> of all " +
+        'photographs sorted by the query \'<strong class="has-text-link">' +
+        curQuery + '</strong>\'';
+    }else if (noResultsFlag) {
+      spanSearchMessage.innerHTML =
+        '<strong>No exact matches found!</strong> Showing ' +
+        '<strong>' + String((page - 1) * PAGE_SIZE + 1) + "-" +
+        String((page) * PAGE_SIZE) + "</strong> of all " +
+        'photographs sorted by the query \'<strong class="has-text-link">' +
+        curQuery + '</strong>\'';
     } else if (curPageMax === 1) {
       spanSearchMessage.innerHTML =
         '<strong>' + String(curIds.length) + '</strong>' +
-        ' results found for <strong class="has-text-link">\'' +
-        curQuery + '\'</strong>';       
+        ' results found for \'<strong class="has-text-link">' +
+        curQuery + '</strong>\'';       
     } else {
       spanSearchMessage.innerHTML =
         '<strong>' + String((page - 1) * PAGE_SIZE + 1) + "-" +
         String((page) * PAGE_SIZE) + "</strong> of " +
         '<strong>' + String(curIds.length) + '</strong>' +
-        ' results for <strong class="has-text-link">\'' +
-        curQuery + '\'</strong>'; 
+        ' results for \'<strong class="has-text-link">' +
+        curQuery + '</strong>\''; 
     }
   });
 };
@@ -592,7 +635,77 @@ const addSearchOptions = function(dRes) {
 
 // download the main dataset
 const dBase = getData("data/data.json");
+const dEmbed = getData("data/embed.json");
 let mapObject = null;
+let imageEmbed = {};
+let tok = null;
+let model = null;
+
+dEmbed.then(async (embed) => {
+  Object.entries(embed).forEach(([key, value]) => {
+    imageEmbed[key] = new Tensor(
+      'float32',
+      new Float32Array(value),
+      [1, 768],
+    );
+  });
+
+  const tokenizer = AutoTokenizer.from_pretrained(
+    'Xenova/siglip-base-patch16-224',
+    {
+      dtype: 'q8',
+      device: 'wasm'
+    },
+  );
+  const text_model = SiglipTextModel.from_pretrained(
+    'Xenova/siglip-base-patch16-224',
+    {
+      dtype: 'q8',
+      device: 'wasm'
+    },
+  );
+
+  [tok, model] = await Promise.all([tokenizer, text_model])
+});
+
+const sortBySearch = async function(queryString) {
+  if (model !== null) {
+    const text_inputs = tok([queryString], {
+      padding: 'max_length',
+      truncation: true,
+    });
+    const { pooler_output } = await model(text_inputs);
+    const vecText = pooler_output.normalize(2, 1);
+
+    const logit_bias = -12.932437;
+    const logit_scale = 117.330765;
+    const vecTrans = vecText.squeeze().unsqueeze(1);
+
+    let scores = [];
+    for (let i = 0; i < curIds.length; i++) {
+      const mat = await matmul(imageEmbed[curIds[i]], vecTrans);
+      const prob = mat.mul(logit_scale).add(logit_bias).sigmoid().tolist()[0];
+      scores.push(prob);
+    }  
+
+    const index = argsortRev(scores);
+
+    let newIds = [];
+    for (let i = 0; i < curIds.length; i++) {
+      newIds.push(curIds[index[i]]);    
+    }
+    curIds = newIds;
+  }
+}
+
+const argsortRev = function (array) {
+  // Create an array of indices [0, 1, 2, ..., array.length - 1]
+  return array
+    .map((value, index) => ({ value, index })) // Map values to their indices
+    .sort((a, b) => b.value - a.value) // Sort by the values
+    .map(({ index }) => index); // Extract the sorted indices
+};
+
 
 document.addEventListener('DOMContentLoaded', () => {
 
