@@ -14,12 +14,38 @@
   --bulma-family-primary: "Fira Sans";
 }
 
+a.anchor {
+    display: block;
+    position: relative;
+    top: -50px;
+    visibility: hidden;
+}
+
 .navbar {
   --bulma-navbar-item-hover-background-l-delta: -10% !important;
 }
 
 #elemControl {
   width: 40rem;
+}
+
+.help-search {
+  background-color: rgb(75, 95, 53);
+}
+
+.has-background-primary-lite {
+  background-color: hsl(var(--bulma-primary-h), var(--bulma-primary-s), 70%) !important;
+}
+
+.tt {
+  font-family: monospace;
+  background-color: #eee;
+  border-radius: 4px;
+  padding: 2px 5px 2px 5px;
+}
+
+.help-search:hover {
+  background-color: rgb(105.0 133.0  74.2);
 }
 
 @media screen and (max-width: 1023px) {
@@ -44,6 +70,20 @@
 
 .navbar {
   --bulma-navbar-item-hover-background-l-delta: 0% !important;
+}
+
+.slink {
+  font-weight: 600;
+  color: hsl(var(--bulma-link-h), var(--bulma-link-s), 80%) !important;
+}
+
+#aiGeneratedMetadata {
+  border-top: 1px black dotted;
+  margin-top: 20px;
+}
+
+#similarPhotos {
+  padding-bottom: 50px;
 }
 
 a.navbar-item:focus, a.navbar-item:focus-within, a.navbar-item:hover,

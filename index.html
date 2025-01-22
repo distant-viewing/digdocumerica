@@ -25,10 +25,14 @@
           <strong class="">DIGITAL DOCUMERICA</strong>
         </a>
         <div id="elemControl" class="control has-icons-right ml-2" style="display: flex; align-items: center; justify-content: center;">
-          <input id="inputControl" class="input is-link" autocapitalize="off" type="text" list="datalistObj" placeholder="Search photos">
-          <datalist id="datalistObj"></datalist>
+          <input id="inputControl" class="input is-link" autocapitalize="off" type="text" placeholder="Search photos">
           <span class="icon is-small is-right mt-15">
             <button id="btnClearInputControl" class="delete is-clickable"></button>
+          </span>
+        </div>
+        <div style="display: flex; align-items: center; justify-content: center; padding-left: 14px">
+          <span class="tag is-link is-hoverable is-rounded tooltip help-search" id="openSearchModal">
+            <i class="fas fa-question"></i>
           </span>
         </div>
         <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
@@ -55,7 +59,7 @@
           <h2 class="title is-size-2">Digital Documerica</h2>
           <p class="subtitle is-size-4">Exploring Environmental Photography from the 1970s</p>
           <p class="is-size-6 my-3 has-text-justified"> The United States Environmental Protection Agency (EPA) emerged in 1970 to implement policies that would support efforts to improve the health of the environment and American citizens. Within a year of the EPA's founding, the new agency started Documerica, a documentary photography project designed to record the current state of the environment and improvements brought by new policies. With an archive of photographs documenting the need for and implementation of environmental laws, the project offers a powerful lens into the nation's effort to become more environmentally friendly. Nearly 16,000 photographs from the Documerica collection are digitized and available from the U.S. National Archives and Records Association (NARA), all in the public domain. </p>
-          <p class="is-size-6 my-3 has-text-justified"> Digital Documerica seeks to broaden knowledge and engagement with the Documerica project through a set of tools and resources to explore the photographic archive of the collection. Use the buttons on the left to explore the collection through themes, media, or through a randomized walk throug the archive. </p>
+          <p class="is-size-6 my-3 has-text-justified">Digital Documerica seeks to broaden knowledge and engagement with the Documerica project through a set of tools and resources to explore the photographic archive of the collection. Use the buttons on the left to explore the collection through themes, media, or through a randomized walk throug the archive.</p>
           <div class="buttons" style="justify-content: center;">
             <button class="button is-link is-medium is-clickable mx-3" id="btnCloseWelcome"> START EXPLORING </button>
             <br>
@@ -70,17 +74,184 @@
       <div class="container is-max-tablet">
         <div class="content has-text-justified">
           <h1>The "Digital Documerica" Project</h1>
-          <p> Digital Documerica seeks to broaden knowledge and engagement with the Documerica project through a set of tools and resources to explore the photographic archive of the collection. It was created by the <a href="https://distantviewing.org/" target="_blank" rel="noopener noreferrer">Distant Viewing Lab</a> at the University of Richmond by Taylor Arnold and Lauren Tilton. The site provides several search features as well as additional media regarding the project. The authoritative archive for Documerica is the <a href="https://catalog.archives.gov/id/542493" target="_blank" rel="noopener noreferrer">National Archives of the United States (NARA)</a>, which holds the physical prints of the photographs as well as extensive archival material regarding the project. 
+
+          <p class="pb-4"><a href="#history" class="slink">Documerica: A Brief History</a> | <a href="#searchai" class="slink">Search Functionality</a> | <a href="#environmental" class="slink">Environmental Impact</a> | <a href="#funding" class="slink">Funding</a></p>
+          <p> Digital Documerica broadens knowledge and engagement with the Documerica project through a set of tools and resources to explore the photographic. The digital, humanities project was created by the <a href="https://distantviewing.org/" target="_blank" rel="noopener noreferrer">Distant Viewing Lab</a> at the University of Richmond by Taylor Arnold and Lauren Tilton. We provide several search features including a map, exploration by topic clusters, and open search. The authoritative archive for Documerica is the <a href="https://catalog.archives.gov/id/542493" target="_blank" rel="noopener noreferrer">National Archives of the United States (NARA)</a>, which holds the physical prints, extensive archival material, and copyright information. 
           </p>
-          <h3>Documerica</h3>
-          <p> The United States Environmental Protection Agency (EPA) emerged in 1970 to implement policies that would support efforts to improve the health of the environment and American citizens. Within a year of the EPA's founding, the new agency started Documerica, a documentary photography project designed to record the current state of the environment and improvements brought by new policies. With an archive of photographs documenting the need for and implementation of environmental laws, the project offers a powerful lens into the nation's effort to become more environmentally friendly. Nearly 16,000 photographs from the Documerica collection are digitized and available from the U.S. National Archives (NARA), all in the public domain. </p>
-          <h3>Publications</h3>
-          <p>Please see the following papers for more details about the design and algorithms underlying the project. All publications are freely available. Also, links to reproducable code and data are provided at the links below..</p>
+          <h3>Citation</h3>
+          <p>If you engage with Digital Documerica for your work, please cite as:</p>
+          <pre style="white-space: pre-wrap;">T. Arnold and L. Tilton (2025) "Digital Documerica: Exploring Environmental Photography from the 1970s." URL: https://digitaldocumerica.org</pre>
+          <a class="anchor" id="history"></a>
+          <h3>Documerica: A Brief History</h3>
+          <p>Americans' concerns for the environment grew significantly following
+          World War II. The post-war affluence, marked by <a class="link-search" data-search="cleared forests">cleared forests</a> for
+          <a class="link-search" data-search="segregated suburbs">segregated suburbs</a>, land contamination from <a class="link-search" data-search="nuclear testing">nuclear testing</a>, polluted
+          waterways from chemical plants, and litter from pedestrians, raised
+          serious questions. The concerns led to a series of best sellers, chart
+          toppers, and box office returns that circulated these concerns in print,
+          over the airwaves, and on screens. Rachel Carson’s best-seller <i> Silent
+          Spring </i> (1962) vividly depicted the detrimental effects of <a class="link-search" data-search="pesticides">pesticides</a> on
+          the land, while CBS News aired the first Earth Day on April 22, 1970, a
+          significant event where 20 million people went outside to hike, sing,
+          and protest (<a
+          href="https://www.youtube.com/watch?v=QOkqI1ueZVU">CBS News: Earth
+          Day 1970 Flashback</a>). Along with the civil rights and anti-war
+          movements, the environmental movement proved impossible for the nation’s
+          leaders to ignore.</p>
+          <p>President Nixon supported a cascade of laws in 1970 including
+          establishing a new federal agency known as the EPA. The legislation
+          charged the Environmental Protection Agency with setting the nation’s
+          environmental standards, enforcing regulations, and researching new
+          rules to improve the country's health. Building on legislation passed by
+          the Johnson Administration, the Clean Air Act of 1970 and Clean Water
+          Act of 1972 set the agenda for the EPA alongside new regulations about
+          pesticides, radiation, and waste. How to enforce the laws and track
+          progress and setbacks became key questions.</p>
+          <p>With the administration’s support in 1972, Gifford Hampshire launched
+          DOCUMERICA, a photography unit charged with documenting the current
+          state of the nation’s environment, followed by improvements and
+          challenges of implementing the new laws. The photo editor turned
+          government relations expert drew inspiration from the FSA photographers
+          of the Great Depression and World War II, whose aims included developing
+          a portrait of the nation amid significant turbulence. Among their ranks
+          included Walker Evans, Dorothea Lange, and Gordon Parks (see:
+          <a href="https://photogrammar.org" target="_blank" rel="noopener noreferrer">
+          Photogrammar.org</a>).
+          Arthur
+          Rothstein and fellow FSA photographer John Vachon lent their support and
+          insights to the new unit modeled on their achievements. Photographers
+          were charged with documenting the environmental state of the nation, a
+          kind of visual evidence to augment the data, statistics, and research
+          reports, along with supporting the enforcement of regulations. Deeply
+          concerned about the future, they also set out to demonstrate the power
+          of photography for environmental advocacy.</p>
+          <p>Hampshire hired over 100 photographers to develop the visual baseline
+          using Kodachrome and Ektachrome, a color slide film from Kodak. He hired
+          experienced photojournalists like Jack Corn, Danny Lyon, and Charles
+          O’Rear. Guided by the EPA’s legal mandate, they set out to document
+          pollution, waste, and contamination. It is not always easy since the
+          culprit, such as a toxic gas released into the air, may not always be
+          visible. Phase 1 focused on the initial baseline from 1971 – 1973. Phase
+          2 ran until 1977 with two priorities: rephotographing any significant changes documented in
+          Phase 1 and expanding the baseline to the latest policy developments to
+          land use, energy, and people’s lifestyles that adversely impacted the
+          environment. Subjects included <a class="link-search" data-search="crowded highways">crowded highways</a>,
+          <a class="link-search" data-search="contaminated water">contaminated water</a>, and <a class="link-search" data-search="accumulated garbage">accumulated garbage</a>.
+          Inspired by biologist Barry Commoner’s four laws of ecology, the
+          unofficial slogan of Documerica and the EPA became "everything is
+          connected to everything else." Photography has the potential to turn
+          words into powerful images.</p>
+          <p>The EPA produced nearly 16,000 photographs. The images circulated in
+          government reports, newspapers, and exhibitions. Yet, their reach
+          quickly stopped when Documerica shuttered in 1977 due to shifting
+          priorities. While The EPA’s workforce and budget continued to expand,
+          the amount of work exceeded these significant investments, and
+          priorities moved to other forms of documentation and enforcement. Any
+          hopes of reviving Documerica receded with the 1980 election of Ronald
+          Reagan, whose administration sought to reduce the size of the federal
+          government. In 1981, the <a href="https://catalog.archives.gov/id/542493"
+          target="_blank" rel="noopener noreferrer">
+          National Archives</a> in Bethesda acquired the
+          collection and later digitized the slides. The hopes of Documerica are
+          still to be realized.</p>
+          <p> As you explore Documerica, questions to consider:</p>
+          <ul class="incremental">
+          <li><p>Which photographs catch your attention and why?</p></li>
+          <li><p>Which photographer(s) work stands out to you and why?</p></li>
+          <li><p>Pick a cluster. What can we learn about the topic?</p></li>
+          <li><p>How do you feel when you look at these photographs?</p></li>
+          <li><p>What have you learned about the environment in 1970s America by
+          looking at the pictures and reading the captions?</p></li>
+          <li><p>What additional information would you like to know, and where
+          might you go to find it?</p></li>
+          </ul>
+          <a class="anchor" id="searchai"></a>
+          <h3>Search Functionality + AI-Generated Data</h3>
+          <p>
+          The search bar on Digital Documerica allows for querying both
+          structured archival metadata and automatically-created tags generated
+          with AI models. The search will query the archival title,
+          location, photographer, and automatically generated image captions.
+          By default, we only return results that include all the terms in the query. 
+          The words do not need to appear in the same order. 
+          The algorithm also ignores capitalization. For example, if we type 
+          the word <span class='tt'>rain</span>, the search will return images
+          that have "rain" in their caption as well as any photographs taken by
+          Belinda Rain.
+          By default, we return results for words that start with your request.
+          So, our example query <span class='tt'>rain</span> will also match
+          captions that contain the word <span class='tt'>raining</span> or
+          <span class='tt'>raindrop</span> among others.          
+          </p>
+          <p>
+          To force the model to only return words in the given order or in a specific
+          form, the search term(s) can be enclosed in quotes. If we search for the string
+          <span class='tt'>"blue bird"</span>, the results will only return results where blue
+          and bird appear together. Similarly, <span class='tt'>"bird "</span> (with
+          a space before the final quote) will only find examples where bird is followed by
+          a space.
+          </p>
+          <p>
+          In addition to filtering, the query also includes an ordering to
+          the search results. We use a multimodal model called SigLIP to estimate how 
+          likely the search query would be a reasonable caption for the results. 
+          The returned results are ordered from the most to the least likely
+          to be a caption for a given search. If no results are found, the entire collection
+          is returned ordered by using the same logic: the likeliness to be the caption for that image. 
+          This allows for finding possible matches
+          even if the specific words in the query are not used in the archival or AI-generated
+          captions. It is possible to only sort (and not filter) the results by adding the 
+          special tag <span class='tt'>:sort</span> to the query string. For example, one might 
+          consider searching the word <span class='tt'>feline</span>. Although there are images
+          with captions that use the specific names of felines ('cat', 'leopard', and 'tiger'),
+          no caption directly uses this specific term. However, sorting the entire
+          collection by the term 'feline' using the SigLIP models provides an alternative
+          way of finding the images of felines in the archive.
+          </p>
+          <p>
+          The automatically generated captions were created with OpenAI's GPT-4-turbo model.
+          We generated the captions by asking the model to "Provide a detailed plain-text
+          description of the objects, activities, people, background and/or composition of
+          this photograph." The captions can be found at the bottom of each of the individual
+          photograph pages. While these are far from perfect, making frequent minor errors and
+          occasional major ones, we find that the resulting captions allow for finding images 
+          related to topics featured in the images but not mentioned directly in the (often
+          short) photographic captions from the 1970s. To learn more about this approach and 
+          to download the entire set of captions, see our recent article on using multimodal 
+          AI models for search and discovery linked below.
+          </p>
+          <p>
+          To search for a specific location, start the search string with
+          the marker <span class='tt'>location:</span>. Similarly, we can specify the
+          desired photographer with <span class='tt'>photographer:</span> and the cluster
+          with <span class='tt'>cluster:</span>. These search
+          terms must match exactly; we recommend using the links on the map, cluster, and
+          photographer pages (or on the individual photograph pages) to query by specific
+          fields. When specifying location, photographer, or cluster with these special tags,
+          the tags are ignored in the sorting of the results using SigLIP as described above.
+          </p>
+          <p>Please see the following papers for more details about the design and algorithms underlying the project. All publications are freely available.</p>
           <pre style="white-space: pre-wrap;">T. Arnold and L. Tilton (2024) "Explainable Search and Discovery of Visual Cultural Heritage Collections with Multimodal Large Language Models." <i>Proceedings of the Computational Humanities Research Conference</i>. <a href="https://arxiv.org/abs/2411.04663" target="_blank" rel="noopener noreferrer">[pdf]</a> <a href="https://distantviewing.org/data" target="_blank" rel="noopener noreferrer">[data]</a></pre>
-          <pre style="white-space: pre-wrap;">T. Arnold and L. Tilton (2024) "Automated Image Color Mapping for a Historic Photographic Collection." <i>Proceedings of the Computational Humanities Research Conference</i>. <a href="https://arxiv.org/abs/2411.04659" target="_blank" rel="noopener noreferrer">[pdf]</a> <a href="https://distantviewing.org/data" target="_blank" rel="noopener noreferrer">[data]</a></pre>
+          <pre style="white-space: pre-wrap;">T. Arnold and L. Tilton (2024) "Automated Image Color Mapping for a Historic Photographic Collection." <i>Proceedings of the Computational Humanities Research Conference</i>. (Best Short Paper, CHR 2024) <a href="https://arxiv.org/abs/2411.04659" target="_blank" rel="noopener noreferrer">[pdf]</a> <a href="https://distantviewing.org/data" target="_blank" rel="noopener noreferrer">[data]</a></pre>
+          <p>
+            The links above include reproducable code and a downloadable version of the dataset.</p>
+          </p>
+          <a class="anchor" id="environmental"></a>
+          <h3>AI + Environmental Impact</h3>
+          <p>
+            There are important ongoing discussions and concerns regarding the environmental impacts of
+            generative artifical intelligence models. Particularly given that the the goal of Documerica was
+            to highlight human-caused environment issues, we have aimed to be careful to minimize
+            the environmental impact of the AI models used in the project. We ran the AI models 
+            a single time through the entire collection, and the results are now stored locally on our server. The process of running all of the models used one GPU for an approximate duration of 20 hours. This required roughly
+            6.7 kilowatt hours, creating around 3.4 kilograms (1.7 cubic meters) of carbon emmisions,
+            or approximately the amount of emmisions generated driving a standard-sized car
+            a distance of 24 kilometers or 15 miles [<a href="https://mlco2.github.io/impact" target="_blank" rel="noopener noreferrer">source</a>]. 
+          </p>
+          <a class="anchor" id="funding"></a>
           <h3>Funding</h3>
           <p>Digital Documerica is funded in part by grants from the National Endowement for the Humanities and the Mellon Foundation. Funding has also been provided by the University of Richmond for continued work and development.</p>
-          <div style="display: flex; flex-direction: row; justify-content: space-around">
+          <div style="display: flex; flex-direction: row; justify-content: space-around" class="pb-6">
             <img src="icon/neh_logo.png" style="display:inline-block; height: 100px">
             <img src="icon/mellon_logo.png" style="display:inline-block; height: 100px">
             <img src="icon/shield_ur.png" style="display:inline-block; height: 100px">
@@ -199,9 +370,9 @@
               </ul>
             </div>
           </div>
-          <div class="columns">
+          <div class="columns" id="aiGeneratedMetadata">
             <div class="column full">
-              <h1 class="title is-5 mb-3"> AI-Generated Metadata <span class="tag is-link is-hoverable is-rounded tooltip">
+              <h1 class="title is-5 mb-3"> AI-Generated Metadata <span class="tag is-link is-hoverable is-rounded tooltip" id="aiGeneratedMetadataButton">
                   <i class="fas fa-question"></i>
                   <span class="tooltiptext"> The information below was automatically created with a multimodal large language model. </span>
                 </span>
@@ -221,7 +392,7 @@
               </ul>
             </div>
           </div>
-          <div class="container">
+          <div class="container" id="similarPhotos">
             <span>
               <strong>Most Similar Photos:</strong>
             </span>
@@ -241,6 +412,78 @@
       </div>
       <button class="modal-close is-large" aria-label="close" id="btnCloseModalImage"></button>
     </div>
+
+    <!-- SEARCH INFO OVERLAY MODEL -->
+    <div id="elemModalSearch" class="modal has-text-justified">
+      <div class="modal-background" id="backgroundModalContent"></div>
+      <div class="modal-card">
+      <header class="modal-card-head has-background-primary-lite">
+        <p class="modal-card-title">Search Functionality + AI-Generated Data</p>
+        <button class="delete" aria-label="close" id="btnCloseModalSearch"></button>
+      </header>
+      <section class="modal-card-body">
+        <p class="py-3">
+        The search bar on the Digital Documerica allows for searching both
+        structured archival metadata and automatically created tags generated
+        with AI models. By default, a search will show all images that include
+        every search time in your query in some combination of the archival title,
+        location, photographer or automatically generated image caption. The words
+        do not need to appear in order and the search ignore capitalization.
+        It also, by default, will return results for words that start with your request.
+        For example, the query <span class='tt'>cat</span> will match both
+        <span class='tt'>cats</span> and <span class='tt'>Catherine</span>.
+        To force the model to only return words in the given order or in a specific
+        form, the search term(s) can be enclosed in quotes. For example,
+        <span class='tt'>"white cat"</span> will only return results where white and
+        cat appear together and <span class='tt'>"cat "</span> (with
+        a space before the final quote) will only find examples where cat is followed by
+        a space.
+        </p>
+        <p class="py-3">
+        In addition to filtering the search results, the query also provides an ordering to
+        the images that are found. We use a multimodal model called SigLIP to estimate how 
+        likely the search query would be to be a reasonable caption for a given photograph
+        in the output. The returned results are ordered from the most to the least likely
+        to be a caption for a given search. If no results are found, the entire collection
+        is returned ordered by the search query. This allows for finding possible matches
+        even if the specific words in the query are not used in the archival or AI-generated
+        captions. It is possible to only sort (and not filter) the results by adding the 
+        special tag <span class='tt'>:sort</span> to the query string.
+        </p>
+        <p class="py-3">
+        The automatically generated captions were created with OpenAI's GPT-4-turbo model.
+        We generated the captions by asking the model to "Provide a detailed plain-text
+        description of the objects, activities, people, background and/or composition of
+        this photograph". The captions can be found at the bottom of each of the individual
+        photograph pages. While these are far from perfect, making frequent minor errors and
+        occasional major ones, we find that the future well to allow for finding images 
+        related to topics features in the images but not mentioned directly in the (often
+        short) photographic captions. To learn more about this approach and download the
+        entire set of captions, see our recent article on using multimodal AI models for
+        search and discovery
+        <a href="https://arxiv.org/abs/2411.04663" target="_blank" rel="noopener noreferrer">(Arnold and Tilton, 2024)</a>.
+        </p>
+        <p class="py-3">
+        To search along a specific location, start the part of the search string with
+        the marker <span class='tt'>location:</span>. Similarly, you can specify the
+        desired photographer with <span class='tt'>photographer:</span> and the cluster
+        with <span class='tt'>cluster:</span>. These search
+        terms must match exactly; we recommend using the links on the map, cluster and
+        photographer pages (or on the individual photograph pages) to query by specific
+        fields. When specifying location, photographer or cluster with these special tags,
+        the tags are ignored in the sorting of the results using SigLIP as described above.
+        </p>
+      </section>
+      <footer class="modal-card-foot">
+        <div class="buttons">
+          <button class="button has-background-primary" id="btnCloseModalSearch2">Close</button>
+          <button class="button" id="btnCloseModalSearchAbout">More Info</button>
+        </div>
+      </footer>
+      </div>
+    </div>
+
+    <!-- LOAD THE SCRIPT -->
     <script src="js/site.js" type="module"></script>
   </body>
 </html>

@@ -57,6 +57,15 @@ const updateStateAll = function()
   const page = Number(getSearchParam("page", 1));
   const pid = getSearchParam("pid", "549112");
   let elem = getSearchParam("r", "welcome");
+  let info = getSearchParam("info", "");
+
+  // what to do with the about modal?
+  const elemModalSearch = document.getElementById('elemModalSearch');
+  if (info == "search") {
+    elemModalSearch.classList.add('is-active');
+  } else {
+    elemModalSearch.classList.remove('is-active');    
+  }
 
   // make sure that the values are valid, and update if needed
   if (!MODE_APPS.includes(elem)) { elem = "welcome"; }
@@ -623,15 +632,15 @@ const updateStateMap = function()
   });
 };
 
-const addSearchOptions = function(dRes) {
-  const datalistObj = gId("datalistObj");
+// const addSearchOptions = function(dRes) {
+//   const datalistObj = gId("datalistObj");
 
-  for (let j = 0; j < dRes.opts.length; j++) { 
-    const option = document.createElement("option");
-    option.value = dRes.opts[j];
-    datalistObj.appendChild(option);
-  }
-};
+//   for (let j = 0; j < dRes.opts.length; j++) { 
+//     const option = document.createElement("option");
+//     option.value = dRes.opts[j];
+//     datalistObj.appendChild(option);
+//   }
+// };
 
 // download the main dataset
 const dBase = getData("data/data.json");
@@ -710,7 +719,17 @@ const argsortRev = function (array) {
 document.addEventListener('DOMContentLoaded', () => {
 
   dBase.then(updateStateAll);
-  dBase.then(addSearchOptions);
+  //dBase.then(addSearchOptions);
+
+  const searchLinks = [...document.getElementsByClassName('link-search')];
+  for (let i = 0; i < searchLinks.length; i++) {
+    searchLinks[i].addEventListener(
+      "click", () => {
+        setSearchParam({"r": "grid", "q": searchLinks[i].dataset.search});
+        updateStateAll();
+      }
+    )
+  }
 
   gId("btnCloseWelcome").addEventListener(
     "click", () => {
@@ -836,6 +855,55 @@ document.addEventListener('DOMContentLoaded', () => {
       updateStateAll();
     }
   );
+
+  gId("openSearchModal").addEventListener(
+    "click", () => {
+      setSearchParam({"r": "about"});
+      updateStateAll();
+      const url = location.href;
+      location.href = "#searchai";                
+      //history.replaceState(null, null, url);
+    }
+  ); 
+
+  gId("aiGeneratedMetadataButton").addEventListener(
+    "click", () => {
+      setSearchParam({"r": "about"});
+      updateStateAll();
+      const url = location.href;
+      location.href = "#searchai";                
+      //history.replaceState(null, null, url);
+    }
+  ); 
+
+  gId("backgroundModalContent").addEventListener(
+    "click", () => {
+      setSearchParam({"info": ""});
+      updateStateAll();
+    }
+  ); 
+
+  gId("btnCloseModalSearch").addEventListener(
+    "click", () => {
+      setSearchParam({"info": ""});
+      updateStateAll();
+    }
+  ); 
+
+  gId("btnCloseModalSearch2").addEventListener(
+    "click", () => {
+      setSearchParam({"info": ""});
+      updateStateAll();
+    }
+  ); 
+
+
+  gId("btnCloseModalSearchAbout").addEventListener(
+    "click", () => {
+      setSearchParam({"info": "", "r": "about"});
+      updateStateAll();
+    }
+  ); 
 
   const $navbarBurgers = Array.prototype.slice.call(
     document.querySelectorAll('.navbar-burger'), 0
