@@ -868,6 +868,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   ); 
 
+  gId("link-about").addEventListener(
+    "click", () => {
+      setSearchParam({"r": "about"});
+      updateStateAll();
+      const url = location.href;
+      location.href = "#clusters";                
+      //history.replaceState(null, null, url);
+    }
+  ); 
+
   gId("aiGeneratedMetadataButton").addEventListener(
     "click", () => {
       setSearchParam({"r": "about"});
