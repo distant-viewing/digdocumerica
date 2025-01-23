@@ -475,6 +475,8 @@ const updateStateCluster = function()
     }
     const keys = items.map((e) => { return e[0]; });
 
+    console.log(dRes.cluster);
+
     innerContainerCluster.replaceChildren();
     for (let j = 0; j < keys.length; j++) {
 
