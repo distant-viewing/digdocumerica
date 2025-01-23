@@ -35,6 +35,8 @@ const metaCaption = gId("metaCaption");
 const metaKeywords = gId("metaKeywords");
 const ulPaginate = gId("ulPaginate");
 const spanSearchMessage = gId("spanSearchMessage");
+const spanSearchMessageOverlay = gId("spanSearchMessageOverlay");
+const searchOverlay = gId("searchOverlay");
 
 // variable to store a pointer to the search results
 let curQuery = "";
@@ -49,6 +51,7 @@ let curCountLocation = {};
 let queryString = "";
 let noResultsFlag = false;
 let sortOnlyFlag = false;
+let okaySort = false;
 
 const updateStateAll = function()
 {
@@ -186,6 +189,9 @@ const updateStateSearch = function(query)
     inputControl.value = query;
     const querySet = splitStringQuotes(query);
     let searchSet = dRes.search;
+
+    okaySort = false;
+    gId('searchOverlay').classList.add('hidden');
 
     let queryStringArray = [];
     for (let j = 0; j < querySet.length; j++)
@@ -336,13 +342,20 @@ const updateStateGridPagination = function(page)
         String((page) * PAGE_SIZE) + "</strong> of all " +
         'photographs sorted by the query \'<strong class="has-text-link">' +
         curQuery + '</strong>\'';
-    }else if (noResultsFlag) {
+    } else if (noResultsFlag) {
       spanSearchMessage.innerHTML =
         '<strong>No exact matches found!</strong> Showing ' +
         '<strong>' + String((page - 1) * PAGE_SIZE + 1) + "-" +
         String((page) * PAGE_SIZE) + "</strong> of all " +
         'photographs sorted by the query \'<strong class="has-text-link">' +
         curQuery + '</strong>\'';
+
+      if (!okaySort) {
+        spanSearchMessageOverlay.innerHTML = 
+          '\'<strong class="has-text-link">' + curQuery + '</strong>\''; 
+        searchOverlay.classList.remove('hidden');    
+      }
+
     } else if (curPageMax === 1) {
       spanSearchMessage.innerHTML =
         '<strong>' + String(curIds.length) + '</strong>' +
@@ -474,8 +487,6 @@ const updateStateCluster = function()
       items.sort((first, second) => { return second[1] - first[1]; });
     }
     const keys = items.map((e) => { return e[0]; });
-
-    console.log(dRes.cluster);
 
     innerContainerCluster.replaceChildren();
     for (let j = 0; j < keys.length; j++) {
@@ -914,6 +925,30 @@ document.addEventListener('DOMContentLoaded', () => {
     "click", () => {
       setSearchParam({"info": "", "r": "about"});
       updateStateAll();
+    }
+  ); 
+
+  gId("btnSortSearchClear").addEventListener(
+    "click", () => {
+      inputControl.value = "";
+      setSearchParam({"page": 1, "q": ""});
+      updateStateAll();
+    }
+  );
+
+  gId("btnSortSearch").addEventListener(
+    "click", () => {
+      searchOverlay.classList.add('hidden');
+      okaySort = true;
+    }
+  ); 
+
+  gId("btnSortSearchInfo").addEventListener(
+    "click", () => {
+      setSearchParam({"r": "about"});
+      updateStateAll();
+      const url = location.href;
+      location.href = "#searchai";                
     }
   ); 
 

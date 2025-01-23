@@ -318,21 +318,46 @@
         </div>
 
         <!-- PAGINATION OF THE RESULTS -->
-        <nav id="elemPaginate" class="pagination is-centered is-rounded is-small mt-2 mb-0" aria-label="pagination">
+        <nav id="elemPaginate"
+          class="pagination is-centered is-rounded is-small mt-2 mb-0"
+          aria-label="pagination">
           <a href="#" class="pagination-previous" id="btnPaginatePrevious">Previous</a>
           <a href="#" class="pagination-next" id="btnPaginateNext">Next</a>
           <ul class="pagination-list" id="ulPaginate"></ul>
         </nav>
+
         <!-- RESULTS -->
-        <div id="elemContainerSearch" class="container has-text-centered">
+        <div id="elemContainerSearch" class="container has-text-centered mt-2 p-2">
           <span id="spanSearchMessage" class="is-size-7"></span>
           <div class="media is-flex is-flex-wrap-wrap is-justify-content-center" id="innerContainerSearch"></div>
         </div>
+
+        <div class="searchOverlay hidden" id="searchOverlay">
+          <div class="searchOverlayInner">
+            No exact results found for <span id="spanSearchMessageOverlay"></span>.
+            We can try sorting the entire collection using a multimodal AI method.
+            This will return all images in the collection starting
+            with those that <i>may</i> have some similarity to your query.
+            <div class="buttons" style="justify-content: center;">
+              <button class="button has-background-primary is-small mt-4" id="btnSortSearchClear">
+                Clear
+              </button>
+              <button class="button has-background-primary is-small mt-4" id="btnSortSearch">
+                Show Sorted Collection
+              </button> 
+              <button class="button has-background-white is-small mt-4" id="btnSortSearchInfo">
+                More Info
+              </button>
+            </div>
+          </div>
+        </div>
+
         <!-- CLUSTERS -->
         <div id="elemContainerCluster" class="container is-hidden">
           <span style="font-size: 0.9em">Automatically generated categories that attempt to capture key themes in the collection. See the <a id="link-about">[about]</a> page for more information.</span>
           <div class="media is-flex is-flex-wrap-wrap is-justify-content-center" id="innerContainerCluster"></div>
         </div>
+
         <!-- PHOTOGRAPHERS -->
         <div id="elemContainerPhotographer" class="container is-hidden">
           <p style="font-size: 0.9em" class="has-text-justified">Names of the photographers for all images in your current search query. The numbers show the total number of images from a photographer that are part of your results. Click on a photographer to further filter the search, or clear the search bar above to see all photographers.</p>

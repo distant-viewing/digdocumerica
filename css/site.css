@@ -302,3 +302,43 @@ figure {
 .leaflet-circle-custom:hover {
   fill: #576f3e !important;
 }
+
+.searchOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(240, 240, 240, 0.95);
+  border-radius: 5px;
+}
+
+.searchOverlayInner {
+  background: white;
+  border-radius: 12px;
+  top: 100px;
+  width: 400px;
+  padding: 22px;
+  text-align: justify;
+  font-size: 0.95em;
+  margin: 100px auto;
+  border: 4px solid hsl(var(--bulma-primary-h), var(--bulma-primary-s), 70%) !important;
+}
+
+.navOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(200, 200, 200, 0.9);
+  border-radius: 5px;
+}
+
+.hidden {
+  display: none;
+}
+
+.invisible {
+  visibility: hidden;
+}
