@@ -4,7 +4,7 @@ import {
   addStringIfNot, setClass, getData, gId, getSearchParam, setSearchParam
 } from "./utils.js";
 
-import { Tensor, matmul, AutoTokenizer, SiglipTextModel } from './transformers.min.js';
+import { Tensor, matmul, AutoTokenizer, SiglipTextModel, pipeline } from './transformers.min.js';
 
 
 // maximum number of images to display on a search result page
@@ -45,12 +45,14 @@ let curPageMax = 1;
 let curPid = "542495";
 let curId = 0;
 let curIds = [];
+let curScores = [];
 let curCountClust = {};
 let curCountPhotographer = {};
 let curCountLocation = {};
 let queryString = "";
 let noResultsFlag = false;
 let sortOnlyFlag = false;
+let showScoresFlag = false;
 let okaySort = false;
 
 const updateStateAll = function()
@@ -199,17 +201,24 @@ const updateStateSearch = function(query)
       let qs = querySet[j].toLowerCase();
       qs = qs.replace('"','');
       qs = qs.replace('.','');
-      if (!qs.includes(":")) { queryStringArray.push(qs) };
-      searchSet = doSearch(searchSet, qs);
+      if (!qs.includes(":")) {
+        queryStringArray.push(qs);
+        searchSet = doSearch(searchSet, qs);
+      };
     }
     queryString = queryStringArray.join(" ");
 
     noResultsFlag = false;
     sortOnlyFlag = false;
+    showScoresFlag = false;
 
     if (query.includes(":sort")) {
       searchSet = {};
       sortOnlyFlag = true;
+    }
+
+    if (query.includes(":score")) {
+      showScoresFlag = true;
     }
 
     if (query === "") { 
@@ -249,6 +258,7 @@ const updateStateGridPagination = function(page)
       const div = document.createElement("div");
       const fig = document.createElement("figure");
       const img = document.createElement("img");
+      const caption = document.createElement("figcaption");
 
       div.addEventListener(
         "click", () => {
@@ -261,10 +271,15 @@ const updateStateGridPagination = function(page)
       fig.classList.add(...["image", "is-128x128", "m-3"]);
       img.src = "img/thm/" + curIds[j] + ".jpg";
 
+      if ((curScores.length !== 0) & (showScoresFlag) ) {
+        caption.innerHTML = Number(curScores[j]).toFixed(4);        
+      }
+
+      fig.appendChild(img);
       innerContainerSearch
         .appendChild(div)
         .appendChild(fig)
-        .appendChild(img);
+        .appendChild(caption);
       }
 
     // 2. set state of the previous and next buttons 
@@ -713,10 +728,13 @@ const sortBySearch = async function(queryString) {
     const index = argsortRev(scores);
 
     let newIds = [];
+    let scoreSort = [];
     for (let i = 0; i < curIds.length; i++) {
-      newIds.push(curIds[index[i]]);    
+      newIds.push(curIds[index[i]]);
+      scoreSort.push(scores[index[i]]);
     }
     curIds = newIds;
+    curScores = scoreSort;
   }
 }
 

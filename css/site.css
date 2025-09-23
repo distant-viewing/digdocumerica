@@ -21,6 +21,11 @@ a.anchor {
     visibility: hidden;
 }
 
+figcaption {
+  font-weight: 700;
+  font-size: 0.8em;
+}
+
 .navbar {
   --bulma-navbar-item-hover-background-l-delta: -10% !important;
 }
