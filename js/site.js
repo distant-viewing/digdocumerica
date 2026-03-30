@@ -749,7 +749,22 @@ const argsortRev = function (array) {
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  dBase.then(updateStateAll);
+  // Disable search input and show animated loading placeholder until data is ready
+  inputControl.disabled = true;
+  const loadingDots = [".", "..", "...", "...."];
+  let loadingDotIndex = 0;
+  inputControl.placeholder = "Loading " + loadingDots[0];
+  const loadingInterval = setInterval(() => {
+    loadingDotIndex = (loadingDotIndex + 1) % loadingDots.length;
+    inputControl.placeholder = "Loading " + loadingDots[loadingDotIndex];
+  }, 400);
+
+  dBase.then(() => {
+    clearInterval(loadingInterval);
+    inputControl.disabled = false;
+    inputControl.placeholder = "Search photos";
+    updateStateAll();
+  });
   //dBase.then(addSearchOptions);
 
   const searchLinks = [...document.getElementsByClassName('link-search')];
