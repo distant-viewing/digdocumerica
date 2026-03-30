@@ -201,9 +201,9 @@ const updateStateSearch = function(query)
       let qs = querySet[j].toLowerCase();
       qs = qs.replace('"','');
       qs = qs.replace('.','');
+      searchSet = doSearch(searchSet, qs);
       if (!qs.includes(":")) {
         queryStringArray.push(qs);
-        searchSet = doSearch(searchSet, qs);
       };
     }
     queryString = queryStringArray.join(" ");
